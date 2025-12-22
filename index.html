@@ -1,0 +1,520 @@
+<!doctype html>
+<html lang="en" data-bs-theme="auto">
+  <head>
+    <script src="assets/js/color-modes.js"></script>
+    <link rel="icon" type="image/x-icon" href="assets/img/favicon.ico">
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Hayato Kimura, Ryoma Ito, Kazuhiko Minematsu and Takanori Isobe">
+    <meta name="generator" content="Hugo 0.112.5">
+    <title>Gravity of the Situation: Security Analysis on Rocket.Chat E2EE</title>
+
+    <!-- SEO: concise description for indexing -->
+    <meta name="description" content="Gravity of the Situation: Security Analysis on Rocket.Chat E2EE — cryptographic evaluation and findings about Rocket.Chat's E2EE deployment and risks.">
+    <!-- Open Graph & Twitter: ensure correct title used when indexed/shared -->
+    <meta property="og:title" content="Gravity of the Situation: Security Analysis on Rocket.Chat E2EE">
+    <meta name="twitter:title" content="Gravity of the Situation: Security Analysis on Rocket.Chat E2EE">
+    <meta property="og:description" content="Gravity of the Situation: Security Analysis on Rocket.Chat E2EE — cryptographic evaluation and findings about Rocket.Chat's E2EE deployment and risks.">
+    <meta name="twitter:description" content="Gravity of the Situation: Security Analysis on Rocket.Chat E2EE — cryptographic evaluation and findings about Rocket.Chat's E2EE deployment and risks.">
+    <meta name="robots" content="index, follow">
+    <!-- JSON-LD structured data to help search engines pick up the exact headline -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "Gravity of the Situation: Security Analysis on Rocket.Chat E2EE",
+      "description": "Gravity of the Situation: Security Analysis on Rocket.Chat E2EE — cryptographic evaluation and findings about Rocket.Chat's E2EE deployment and risks.",
+      "author": [
+        {"@type": "Person", "name": "Hayato Kimura"},
+        {"@type": "Person", "name": "Ryoma Ito"},
+        {"@type": "Person", "name": "Kazuhiko Minematsu"},
+        {"@type": "Person", "name": "Takanori Isobe"}
+      ],
+      "publisher": {"@type": "Organization", "name": "Cryptography Engineering Laboratory, The University of Osaka"}
+    }
+    </script>
+
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+<!-- Using Bootswatch 'Cosmo' theme via CDN -->
+<link href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/cosmo/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+      .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        user-select: none;
+      }
+
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+      }
+
+      .bi {
+        vertical-align: -.125em;
+        fill: currentColor;
+      }
+    </style>
+
+    <!-- カスタムフォント (Noto Sans JP) とカスタム CSS を読み込み -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/custom.css?v=2">
+
+
+  </head>
+  <body>
+    <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+      <symbol id="check2" viewBox="0 0 16 16">
+        <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>
+      </symbol>
+      <symbol id="circle-half" viewBox="0 0 16 16">
+        <path d="M8 15A7 7 0 1 0 8 1v14zm0 1A8 8 0 1 1 8 0a8 8 0 0 1 0 16z"/>
+      </symbol>
+      <symbol id="moon-stars-fill" viewBox="0 0 16 16">
+        <path d="M6 .278a.768.768 0 0 1 .08.858 7.208 7.208 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 0 1 .81.316.733.733 0 0 1-.031.893A8.349 8.349 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 0 1 6 .278z"/>
+        <path d="M10.794 3.148a.217.217 0 0 1 .412 0l.387 1.162c.173.518.579.924 1.097 1.097l1.162.387a.217.217 0 0 1 0 .412l-1.162.387a1.734 1.734 0 0 0-1.097 1.097l-.387 1.162a.217.217 0 0 1-.412 0l-.387-1.162A1.734 1.734 0 0 0 9.31 6.593l-1.162-.387a.217.217 0 0 1 0-.412l1.162-.387a1.734 1.734 0 0 0 1.097-1.097l.387-1.162zM13.863.099a.145.145 0 0 1 .274 0l.258.774c.115.346.386.617.732.732l.774.258a.145.145 0 0 1 0 .274l-.774.258a1.156 1.156 0 0 0-.732.732l-.258.774a.145.145 0 0 1-.274 0l-.258-.774a1.156 1.156 0 0 0-.732-.732l-.774-.258a.145.145 0 0 1 0-.274l.774-.258c.346-.115.617-.386.732-.732L13.863.1z"/>
+      </symbol>
+      <symbol id="sun-fill" viewBox="0 0 16 16">
+        <path d="M8 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13zm8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5zM3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8zm10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0zm-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707zM4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708z"/>
+      </symbol>
+    </svg>
+
+  
+  
+  <!--
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark" aria-label="Tenth navbar example">
+  <div class="container-fluid">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample08" aria-controls="navbarsExample08" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-md-center" id="navbarsExample08">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link active" href="#">Paper</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" href="#">PoC (GitHub)</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" href="#">Team</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+-->
+
+<main>
+
+  <section class="hero text-center">
+    <div class="row py-lg-5">
+      <div class="col-lg-6 col-md-8 mx-auto">
+        <div class="d-flex flex-column align-items-center">
+          <img src="/assets/img/icon.png" alt="Logo" width="100" height="100" class="rounded-circle">
+          <h1 class="fw-light hero-title">
+            <span class="hero-line-1">Gravity of the Situation:</span>
+            <span class="hero-line-2">Security Analysis on Rocket.Chat E2EE</span>
+         </h1>
+        </div>
+        <p class="d-flex gap-3 justify-content-center">
+          <a href="#paper" class="btn btn-primary my-2"><i class="bi bi-file-earmark-text fs-4"></i> Paper</a>
+          <a href="#poc" class="btn btn-secondary my-2"><i class="bi bi-tools fs-4"></i> PoC on GitHub</a> 
+          <a href="#faq" class="btn btn-secondary my-2"><i class="bi bi-question-circle fs-4"></i> FAQ</a>
+          <a href="#team" class="btn btn-secondary my-2"><i class="bi bi-people fs-4"></i> Team</a>
+        </p>
+      </div>
+    </div>
+  </section>
+
+
+  <div class="album py-5 bg-body-tertiary">
+    <div class="container">
+      <div class="row row-cols-1 g-4">
+        <!-- Card: Overview -->
+        <div class="col">
+          <div class="card h-100">
+            <div class="card-body">
+              <h3 class="card-title">What is Rocket.Chat?</h3>
+                <p class="card-text">
+                    Rocket.Chat is a widely deployed group chat platform used across enterprises, public-sector
+                    organizations, educational institutions, and self-hosted environments. It serves over 15 million users in 150 countries and supports both SaaS and
+                    on-premises deployments.
+
+                <p class="card-text mb-0">
+                    A key feature of this platform is End-to-End Encryption (E2EE) for group chats. E2EE is intended to protect confidentiality and integrity even if the server is untrusted, but real-world
+                    security depends on both protocol design and correct implementation. Our research conducts the first in-depth security & cryptographic analysis of Rocket.Chat E2EE protocol and implementation.
+                </p><br/>
+
+                <p class="card-text mb-0">
+                    Through this analysis, we discovered practical attacks, including key recovery that affects message confidentiality and encrypted message forgery. These attacks can break the core confidentiality and integrity guarantees expected from E2EE.
+                    We reported our findings to the Rocket.Chat Technology security team and worked collaboratively with them. As a result, critical issues affecting confidentiality and integrity identified in our report have been addressed, and patches have been released.
+                    Rocket.Chat also acknowledged the remaining issues we reported. They stated that remaining unpatched issues are currently being treated as risk accepted and will be reviewed in the future.
+            </div>
+          </div>
+        </div>
+
+          <div class="col">
+              <div id="note" class="card h-100">
+                  <div class="card-body">
+                      <h3 class="card-title">Note:</h3>
+                      For readability, this page and our paper use the present tense. However, critical vulnerabilities
+                      reported in this work have already been addressed, and vendor patches are available (see
+                      <a href="#disclosure" class="alert-link">Disclosure</a>).
+                  </div>
+              </div>
+          </div>
+
+        <!-- Card: Results -->
+        <div class="col">
+          <div class="card h-100">
+            <div class="card-body">
+              <h3 class="card-title">Results — Our Security Findings</h3>
+                <p class="card-text">
+                    We conduct the first comprehensive security analysis of Rocket.Chat’s E2EE by combining
+                    formal verification (ProVerif) with extensive manual analysis (specification + source code + operational testing).
+                </p>
+                <ul class="mb-0">
+                    <li><strong>6 vulnerabilities</strong>, <strong>5 practical attacks</strong>, and <strong>several potential issues</strong> (hardening recommendations)</li>
+                    <li>Attacks impacting both <strong>confidentiality</strong> and <strong>integrity</strong></li>
+                    <li>Relevant adversaries include a <strong>malicious server</strong> and, in some deployments, <strong>outsider / network attackers</strong></li>
+                </ul>
+                <br/>
+              <!--a href="#paper" class="stretched-link"></a-->
+                <p class="card-text mb-2"><strong>Our key findings include:</strong></p>
+
+
+                <ol class="mb-0">
+                    <li class="mb-3">
+                        <strong>Practical RSA Private Key Recovery (Offline Attack)</strong><br>
+                        <p class="mt-2 mb-2">
+                        A malicious server can recover a user’s RSA private key in practical time (days to months), enabling decryption of all past and future E2EE messages.
+                        <ul class="mt-2 mb-0">
+                            <li>
+                                <strong>Root cause:</strong> The private-key backup mechanism enables an offline brute-force attack because the initial E2EE password space is too small, and the real implementations further reduce security through biased generation.
+                            </li>
+
+                            <li>
+                                <strong>The Flaw (Mobile App):</strong> We identified a severe bug in the mobile application (v4.48.0). The password generation algorithm is intended to draw from 62 alphanumeric symbols, but it applies a <code>toLowerCase</code> function to the output.
+                                <ul class="mt-2 mb-0">
+                                    <li>
+                                        <strong>Bias &amp; Practical Search:</strong> The effective password space is already small (roughly 2<sup>46.53</sup>).
+                                        Moreover, the generator is <em>non-uniform</em> due to the use of <code>toLowerCase</code>. Compared to a standard uniform
+                                        random choice from the same 36-character pool (lowercase letters + digits), <strong>lowercase letters appear with roughly
+                                        twice the probability</strong>.
+                                        In practice, an attacker can exploit this bias by prioritizing candidates that contain letters, substantially improving the success rate
+                                        (e.g., by over 32% compared to uniform search under the same time budget).
+                                    </li>
+                                </ul>
+                            </li>
+
+                            <li>
+                                <strong>The Flaw (Web App):</strong> The web client also suffers from low entropy (2<sup>53.36</sup>), generating passwords from a small permutation of words.
+                            </li>
+                        </ul>
+                        </p>
+                    </li>
+
+
+                    <li class="mb-3">
+                        <strong>Group Key Compromise (MITM Attack)</strong><br>
+                        <p class="mt-2 mb-2">
+                        We identified a Lack of Authenticity for Public Keys. Since the protocol does not verify RSA public keys,
+                        a malicious server or network attacker can perform a Man-in-the-Middle (MITM) attack.
+                        <ul class="mt-2 mb-0">
+                            <li>
+                                <strong>Impact:</strong> An attacker can replace or inject keys during the setup phase, allowing them to eavesdrop on all encrypted communications
+                                or impersonate legitimate users without detection.
+                            </li>
+                        </ul>
+                        </p>
+                    </li>
+
+                    <li class="mb-3">
+                        <strong>Practical Encrypted Message Forgery (Lack of Integrity)</strong><br/>
+                        <p class="mt-2 mb-2">
+                            Due to the use of AES-CBC without a MAC and the fact that the ciphertext embeds a copy of message metadata,
+                            an attacker can obtain a known-plaintext block corresponding to part of the CBC-encrypted message.
+                            We show that observing only a single ciphertext is sufficient to mount a practical ciphertext-malleability attack,
+                            enabling the attacker to forge valid encrypted message blocks containing arbitrary text.
+                        </p>
+                    </li>
+
+                    <li class="mb-0">
+                        <strong>E2EE password update/reset feature does not revoke compromised keys.</strong><br/>
+                        <p class="mt-2 mb-2">
+                        The E2EE password update/reset feature does not update (rotate) the room group key. This means that once the group key is compromised,
+                        the compromise can persist: an adversary who obtains the group key via MITM, or who recovers the victim’s RSA private key and derives group keys,
+                        can keep decrypting and forging messages even after the victim updates or resets the E2EE password.
+                        </p>
+                    </li>
+                </ol>
+
+                <br/>
+                <p class="mb-2">
+                    <span class="fw-semibold">Other findings.</span>
+                </p>
+
+                <p class="card-text mb-2">
+                    Our paper provides additional in-depth analysis beyond the core attacks. It includes immediately applicable fixes
+                    (implementation-level patches), further recommended improvements (e.g., a design using the Passkey PRF), and a discussion of how to
+                    introduce key authenticity in on-premises deployments.
+                </p>
+
+                <p class="card-text mb-0">
+                    We also report several potential issues and supporting analyses, including the <strong>KeyID issue (ID collisions and potential key
+                    leakage)</strong>, <strong>replay attacks</strong>, <strong>denial-of-service attacks</strong>, and <strong>downgrade attacks</strong>. In addition, we identify gaps between the
+                    Rocket.Chat E2EE documentation and the deployed implementation (see the Appendix), and we analyze affected instances using
+                    Shodan. Issues impacting confidentiality have already been addressed (see the Appendix and
+                    <a href="#disclosure">Disclosure</a>).
+                </p>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Card: Disclosure -->
+        <div class="col">
+          <div class="card h-100">
+            <div class="card-body">
+              <h3 id="disclosure" class="card-title">Disclosure</h3>
+                <p class="card-text">
+                    We follow responsible disclosure and coordinate with the Rocket.Chat security team.
+                    We first contacted the vendor on <strong>May 30, 2024</strong> and received the first response on <strong>June 26, 2024</strong>.<br/>
+                    <u>We informed the Rocket.Chat Security Team of our publication and presentation schedule, and they agreed to it.</u>
+                </p>
+                <ul class="mb-0">
+                    <li>We reported <strong>6 vulnerabilities</strong> and <strong>5 attacks</strong>, plus <strong>3 potential issues</strong>.</li>
+                    <li>Rocket.Chat acknowledged all reported issues.</li>
+                    <li><strong>Still open:</strong> public-key authenticity.</li>
+                </ul><br/>
+
+
+                <strong>Patch Status:</strong>
+                <table border="1" cellpadding="10" cellspacing="0" style="border-collapse: collapse; width: 100%; text-align: left;">
+                    <thead>
+                    <tr style="background-color: #f2f2f2;">
+                        <th>Vulnerability</th>
+                        <th>Status</th>
+                        <th>Fixed Version / Release Date</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>
+                            <strong>RSA Private Key Recovery</strong><br>
+                            <span style="font-size: 0.9em; color: #555;">(Offline Brute-force Attack)</span>
+                        </td>
+                        <td style="color: green; font-weight: bold;">Fixed</td>
+                        <td>
+                            <strong>Patched in Rocket.Chat Mobile v4.51.0 (Oct 2024)</strong><br>
+                            CVE-2024-42027<br>
+                            <span style="font-size: 0.9em; color: #555;">PBKDF2 iterations increased from 1,000 to 100,000.</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <strong>Group Key Update Issues</strong><br>
+                            <span style="font-size: 0.9em; color: #555;">(The E2EE password update/reset feature did not update the group key)</span>
+                        </td>
+                        <td style="color: green; font-weight: bold;">Fixed</td>
+                        <td>
+                            <strong>Patched in version 7.0</strong> (Nov 2024)<br>
+                            Implemented group key rotation features in v7.0.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <strong>Message Integrity</strong><br>
+                            <span style="font-size: 0.9em; color: #555;">(Forgery Attacks)</span>
+                        </td>
+                        <td style="color: green; font-weight: bold;">Fixed</td>
+                        <td>
+                            <strong>Patched in version v7.13.0</strong> (Dec 2025)<br>
+                            Migration from AES-CBC to AES-GCM has already been addressed in v7.13.0.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <strong>KeyID Issues</strong><br>
+                            <span style="font-size: 0.9em; color: #555;">(Key ID collision)</span>
+                        </td>
+                        <td style="color: green; font-weight: bold;">Fixed</td>
+                        <td>
+                            <strong>Patched in version 7.0</strong> (Nov 2024)<br>
+                            Improved KeyID derivation.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <strong>Public Key Authenticity</strong><br>
+                            <span style="font-size: 0.9em; color: #555;">(Man-in-the-Middle Attack by Malicious Server)</span>
+                        </td>
+                        <td style="color: red; font-weight: bold;">Unfixed</td>
+                        <td>
+                            Currently, clients do not verify the peer user's public key in E2EE. This can be exploited by a
+                            <strong>malicious server administrator</strong> or an <strong>attacker who has compromised the server</strong>.<br>
+                            <span style="font-size: 0.9em; color: #555;">
+                              If TLS is properly deployed and strictly enforced, external network attackers cannot practically exploit this issue.
+                                See <a href="#faq">FAQ (Q4)</a> for details.
+                            </span>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+
+                <br/>
+                <p class="mt-2 mb-0">
+                    <strong>Statement from the Rocket.Chat Security Team (Nov 23, 2025):</strong><br/>
+                    “Other issues mentioned in the report are currently being treated as risk accepted and will be reviewed in the future.
+                    For now, we're considering this report to be solved and we're closing it.”
+                </p>
+            </div>
+          </div>
+        </div>
+
+          <!-- Card: Paper & Talk -->
+          <div class="col">
+              <div id="paper" class="card h-100">
+                  <div class="card-body">
+                      <h3 class="card-title">Paper &amp; Talk</h3>
+
+                      <p class="card-text">
+                          <strong>“Gravity of the Situation: Security Analysis on Rocket.Chat E2EE”</strong><br>
+                          <span>Accepted at ACSAC 2025 (Oct 2025) and presented on Dec 10, 2025.</span>
+                      </p>
+                      <a href="" target="_blank" rel="noopener"
+                         class="btn btn-sm btn-outline-primary mt-2">Read PDF (TBA)</a>
+                  </div>
+              </div>
+          </div>
+
+
+        <!-- Card: Proof of Concept -->
+        <div class="col">
+          <div id="poc" class="card h-100">
+            <div class="card-body">
+              <h3 class="card-title">Proof of Concept</h3>
+              <p class="card-text">Proof-of-concept code and reproducible instructions are available on GitHub.</p>
+                <p class="card-text">
+                    We implement working Proof-of-Concept (PoC) exploits to validate exploitability and support vendor verification.
+                </p>
+                <ul class="mb-0">
+                    <li>Web-client PoCs: Rocket.Chat <strong>web</strong> application <strong>v6.8.0</strong></li>
+                    <li>Offline key recovery PoC: Rocket.Chat <strong>mobile</strong> application <strong>v4.48.0</strong></li>
+                    <li>HTTP Proxy-based active attacker experiments (e.g., BurpSuite / mitmproxy / ZAP / PacketProxy)</li>
+                </ul>
+              <a href="https://github.com/gravity-of-the-situation-rc/Artifacts-of-Security-Analysis-on-RocketChat-E2EE" target="_blank" rel="noopener" class="btn btn-sm btn-outline-secondary mt-2">Go to GitHub</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card: FAQ -->
+        <div class="col">
+          <div id="faq" class="card h-100">
+            <div class="card-body">
+              <h3 class="card-title">FAQ</h3>
+                <p class="card-text mb-2">
+                    <strong>Q1. Which versions are affected?</strong><br>
+                    Our findings affect following Rocket.Chat E2EE version.
+                    We strongly recommend upgrading to patched releases.
+                    <ul>
+                    <li>Rocket.Chat Mobile version prior to 4.51 (for the offline key-recovery attack).</li>
+                    <li>Rocket.Chat Server version prior to 7.0 (for the group-key-rotation and KeyID issues).</li>
+                    <li>Rocket.Chat Server version prior to 7.13.0 (for the message-integrity attack).</li>
+                    </ul>
+                    <strong>Important:</strong> applying the patch requires updating <strong>both the server and the clients</strong> to fixed versions.
+
+                </p>
+
+                <p class="card-text mb-2">
+                    <strong>Q2. I’m a user—what can I do right now?</strong><br>
+                <ul class="mb-0">
+                    <li><strong>Mobile:</strong> update Rocket.Chat from your app store (App Store / Google Play) to the latest version.</li>
+                    <li><strong>Desktop:</strong> download and install the latest Rocket.Chat Desktop app from
+                        <a href="https://www.rocket.chat/download-apps" target="_blank" rel="noopener">rocket.chat/download-apps</a>.
+                    </li>
+                    <li><strong>Browser (web):</strong> the web client is delivered by your workspace server, so you cannot patch it locally.
+                        Ask your administrator to upgrade the server (and confirm your workspace is running the patched version).
+                    </li>
+                </ul>
+                </p>
+
+                <p class="card-text mb-0">
+                    <strong>Q3. I’m an workspace admin—what should I do?</strong><br>
+                    Consider deploying Rocket.Chat server <strong>v7.13.0 or later</strong> (preferably the latest available release),
+                    and ask all users of your instance to install the latest Rocket.Chat apps as well.
+                    If your server does not enforce TLS, enable TLS 1.3 (or TLS 1.2) to protect against network adversary.
+                    See:
+                    <a href="https://developer.rocket.chat/docs/supporting-ssl-for-development-on-rocketchat" target="_blank" rel="noopener">
+                        Rocket Chat SSL Support for Dev - Rocket.Chat Docs
+                    </a>.
+                </p></br/>
+
+                <p class="card-text mb-0">
+                    <strong>Q4. Who can exploit the Public Key Authenticity issue (MITM by a malicious server)?</strong><br>
+                    This issue is exploitable by a <strong>malicious server administrator</strong> or an <strong>attacker who has compromised the Rocket.Chat server</strong>,
+                    because the server can replace or inject users’ public keys during E2EE setup or key distribution.<br><br>
+
+                    If TLS is properly deployed and strictly enforced, an <strong>external network attacker</strong> cannot practically exploit this issue because they
+                    cannot intercept and modify the traffic in transit.<br><br>
+
+                    Deploying a fix requires additional feature development. For example:
+                <ul class="mb-0">
+                    <li>
+                        Introduce <strong>out-of-band key authentication</strong>.
+                        This is relatively easy for developers to implement, but it requires users to actively verify keys.
+                    </li>
+                    <li>
+                        Alternatively, adopt a modern key-authentication approach such as <strong>Key Transparency</strong>.
+                        This may introduce operational challenges in on-premises deployments (see our paper).
+                    </li>
+                </ul>
+                </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card: Team -->
+        <div class="col">
+          <div id="team" class="card h-100">
+            <div class="card-body">
+              <h3 class="card-title">Team</h3>
+                <hr class="my-3 text-secondary">
+                <p><a href="https://torima-hayaku.com/"  target=”_blank” rel="noopener">Hayato KIMURA</a> (NICT & The University of Osaka)</p>
+                <p><a href="https://sites.google.com/view/itorym/en" target=”_blank” rel="noopener">Ryoma ITO</a> (NICT)</p>
+                <p><a href="https://www.nec.com/en/global/rd/people/kazuhiko_minematsu.html" target=”_blank” rel="noopener">Kazuhiko MINEMATSU</a> (NEC)</p>
+                <p><a href="https://sites.google.com/view/takanoriisobe/home"  target=”_blank” rel="noopener">Takanori ISOBE</a> (The University of Osaka)</p>
+            </div>
+          </div>
+        </div>
+      </div>
+     </div>
+   </div>
+
+
+
+
+</main>
+
+<footer class="text-body-secondary py-5">
+  <div class="container">
+    <p class="float-end mb-1">
+      <a href="#">Back to top</a>
+    </p>
+    <div style="text-align:center; font-size:0.9em; color:#666;">
+      This website is managed by <a href="https://www.crypt-sec.ist.osaka-u.ac.jp/en" target=”_blank" rel="noopener">Cryptography Engineering Laboratory, The University of Osaka</a><br>
+        <p>This page was first published on 20 Dec 2025	<br>
+      Last updated: 20 Dec 2025 (UTC+0)	</p>
+    </div>
+  </div>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    </body>
+</html>

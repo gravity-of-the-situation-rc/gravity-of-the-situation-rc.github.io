@@ -1,0 +1,340 @@
+/* Custom Bootstrap overrides: Noto Sans JP + Navy theme */
+:root{
+  --bs-primary: #ff5a1f; /* fiery orange */
+  --bs-secondary: #ff7a45;
+  --bs-body-bg: rgba(6,18,36,0.86); /* deep night-sky blue for page background */
+  --bs-body-color: #f7f3ee; /* keep page text light for contrast */
+  --content-bg: #ffffff; /* card background -> white */
+  --content-bg-2: #fbfbfb; /* slight white gradient */
+  --content-text: #07102a; /* dark text for card content (black-ish) */
+  --content-muted: #4b5563;
+  --card-bg: rgba(18,10,6,0.55);
+  --card-border: rgba(255,138,74,0.10);
+  --muted: #d1b3a0;
+}
+
+[data-bs-theme="dark"] {
+  --bs-primary: #ff7a2b;
+  --bs-secondary: #ffb07a;
+  --bs-body-bg: #040205;
+  --bs-body-color: #fff2e6;
+  --card-bg: rgba(30,12,8,0.55);
+  --card-border: rgba(255,160,100,0.10);
+  --muted: #d8bfb0;
+}
+
+/* Body: deep-space background to contrast fiery hero */
+body {
+  /* simpler, darker gradient to avoid muddy grey and improve legibility */
+  background: linear-gradient(180deg, var(--bs-body-bg) 0%, #02040a 100%);
+  color: var(--bs-body-color);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Typography */
+html, body {
+  font-family: 'Noto Sans JP', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+  background-color: var(--bs-body-bg);
+  color: var(--bs-body-color);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--bs-body-color);
+}
+
+.lead { color: var(--muted); }
+
+/* Hero adjustments */
+section.text-center.container {
+  padding-top: 4rem;
+  padding-bottom: 3rem;
+}
+
+h1.fw-light {
+  font-weight: 300 !important;
+  font-size: 2.2rem;
+  margin-top: 0.75rem;
+  text-align: center;
+}
+
+/* Hero: fiery gradient resembling rocket flame */
+.hero {
+  padding: 5rem 0 3rem 0;
+  background: linear-gradient(135deg, #2b0500 0%, #ff4500 12%, #ff8a2b 45%, rgba(255,136,60,0.08) 100%);
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+}
+/* subtle flame texture using radial gradients */
+.hero::after{
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 20% 40%, rgba(255,180,110,0.06), transparent 8%),
+                    radial-gradient(circle at 80% 60%, rgba(255,90,20,0.06), transparent 10%);
+  pointer-events: none;
+}
+
+.hero .rounded-circle {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  margin-bottom: 1rem;
+  box-shadow: 0 24px 70px rgba(255,110,40,0.18) !important;
+  border: 4px solid rgba(255,200,150,0.12) !important;
+}
+
+.hero-title {
+  font-size: 2.8rem;
+  font-weight: 800 !important;
+  letter-spacing: -0.02em;
+  color: #fff !important;
+  text-shadow: 0 8px 30px rgba(255,86,25,0.18);
+  transform-origin: center;
+  animation: ember-flicker 3.6s infinite;
+}
+@keyframes ember-flicker{
+  0% { text-shadow: 0 8px 30px rgba(255,86,25,0.18); transform: translateY(0); }
+  50% { text-shadow: 0 12px 45px rgba(255,120,30,0.28); transform: translateY(-3px); }
+  100% { text-shadow: 0 8px 30px rgba(255,86,25,0.18); transform: translateY(0); }
+}
+
+/* Two-line hero title: line-specific sizing and spacing */
+.hero-title .hero-line-1,
+.hero-title .hero-line-2 {
+  display: block;
+  width: 100%;
+}
+
+.hero-title .hero-line-1 {
+  font-weight: 700 !important;
+  font-size: 1.6rem !important; /* match subtitle line */
+  line-height: 1.02 !important;
+  margin-bottom: 0.1rem;
+}
+
+.hero-title .hero-line-2 {
+  font-weight: 700 !important;
+  font-size: 1.6rem !important; /* subtitle line */
+  line-height: 1.08 !important;
+  opacity: 0.95;
+}
+
+@media (min-width: 992px) {
+  .hero-title .hero-line-1 { font-size: 1.9rem !important; }
+  .hero-title .hero-line-2 { font-size: 1.9rem !important; }
+}
+
+@media (max-width: 575.98px) {
+  .hero-title .hero-line-1 { font-size: 1.8rem !important; }
+  .hero-title .hero-line-2 { font-size: 1.05rem !important; }
+}
+
+/* Improve legibility: stronger title and button typography in hero */
+.hero-title {
+  /* increase weight for visibility */
+  font-weight: 900 !important;
+  font-size: 3.0rem !important;
+  line-height: 1.02 !important;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  letter-spacing: -0.01em;
+}
+
+/* Hero buttons: increase weight and slightly larger size for readability */
+.hero .btn {
+  font-weight: 700 !important;
+  font-size: 1.02rem !important;
+  padding: .7rem 1.15rem !important;
+  letter-spacing: 0.01em !important;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Ensure icon inside buttons doesn't appear thin */
+.hero .btn .bi { font-weight: 700; opacity: 0.95; }
+
+/* Mobile tweaks: reduce title size but keep weight */
+@media (max-width: 575.98px) {
+  .hero-title { font-size: 1.9rem !important; }
+  .hero .btn { font-size: 0.96rem !important; padding: .6rem 1rem !important; }
+}
+
+/* CTA buttons: warm and glowing */
+.hero .btn-primary {
+  background: linear-gradient(90deg, #ff7a2b, #ff4b00);
+  color: #fff;
+  border: none;
+  box-shadow: 0 10px 30px rgba(255,90,30,0.18);
+}
+.hero .btn-secondary {
+  background: rgba(255,255,255,0.06);
+  color: #fff;
+  border: 1px solid rgba(255,140,80,0.06);
+}
+
+/* Hero buttons: white border to clearly outline Paper / PoC / FAQ / Team buttons */
+.hero .btn {
+  /* pure white border so buttons are clearly outlined on fiery hero */
+  border: 1px solid #ffffff !important;
+  /* gentle shadow + subtle inset to keep depth */
+  box-shadow: 0 6px 18px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.03) !important;
+  background-clip: padding-box;
+  /* add subtle dark text shadow for legibility and perceived depth */
+  text-shadow: 0 1px 0 rgba(0,0,0,0.5);
+}
+/* Ensure primary and secondary use the same white border */
+.hero .btn-primary {
+  border-color: #ffffff !important;
+  /* slightly stronger text-shadow for primary */
+  text-shadow: 0 1.5px 0 rgba(0,0,0,0.55);
+}
+.hero .btn-secondary {
+  border-color: #ffffff !important;
+  color: #fff !important;
+  text-shadow: 0 1px 0 rgba(0,0,0,0.45);
+}
+
+/* Hover: maintain slight lift and a subtle warm glow while keeping white border */
+.hero .btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 28px rgba(255,140,60,0.10), 0 6px 18px rgba(0,0,0,0.18) !important;
+  border-color: #ffffff !important;
+  /* add a soft warm glow to text on hover to enhance 'lift' */
+  text-shadow: 0 6px 22px rgba(255,140,60,0.12), 0 1px 0 rgba(0,0,0,0.35);
+}
+
+/* Focus: accessible but subtle */
+.hero .btn:focus {
+  outline: 2px solid rgba(255,255,255,0.12);
+  outline-offset: 2px;
+}
+
+/* Buttons */
+.btn-primary {
+  background-color: var(--bs-primary);
+  border-color: transparent;
+  box-shadow: 0 4px 14px rgba(11,92,255,0.14);
+  padding: 0.6rem 1.05rem;
+  border-radius: 0.65rem;
+}
+.btn-primary:hover, .btn-primary:focus {
+  background-color: #0847c9;
+  box-shadow: 0 6px 20px rgba(11,92,255,0.18);
+}
+
+.btn-secondary {
+  background-color: var(--bs-secondary);
+  color: #fff;
+  border-radius: 0.5rem;
+  padding: 0.52rem 0.9rem;
+}
+
+/* Cards and album */
+.album .p-4 {
+  background-color: var(--card-bg) !important;
+  border: 1px solid var(--card-border) !important;
+  border-radius: 0.8rem !important;
+  box-shadow: 0 6px 18px rgba(23, 36, 64, 0.06);
+}
+
+/* Album (cards container) background: deep starry sky — deeper blue-black variant */
+.album {
+  /* almost-black navy base amplified toward cobalt/navy */
+  background: linear-gradient(180deg, #000920 0%, rgba(0,10,38,0.98) 35%, rgba(0,6,24,0.99) 100%) !important;
+  /* even subtler cool stars: faint cyan/blue specks */
+  background-image: radial-gradient(circle at 5% 14%, rgba(210,235,255,0.06) 0.5px, transparent 1.2px),
+                    radial-gradient(circle at 72% 62%, rgba(185,220,255,0.04) 0.8px, transparent 1.6px);
+  background-repeat: repeat, repeat;
+  background-size: 110px 70px, 170px 100px;
+  padding-top: 2.6rem; /* align spacing with existing py-5 */
+  padding-bottom: 2.6rem;
+}
+
+/* Slight contrast boost for the container so cards stand out */
+.album .container { position: relative; z-index: 1; }
+
+/* Glass cards warmed up to match theme */
+.card {
+  /* cards are now white (swapped) */
+  background: linear-gradient(180deg, var(--content-bg) 0%, var(--content-bg-2) 100%);
+  backdrop-filter: blur(2px) saturate(100%);
+  -webkit-backdrop-filter: blur(2px) saturate(100%);
+  border: 1px solid rgba(2,6,12,0.06);
+  box-shadow: 0 6px 18px rgba(2,6,12,0.06);
+}
+.card .card-body { color: var(--content-text); }
+
+/* Card title and text color tuned for contrast on white */
+.card .card-title { color: #07102a; font-weight: 700; }
+.card .card-text { color: var(--content-text); }
+.album .p-4 { background-color: transparent !important; border-color: rgba(2,6,12,0.04) !important; }
+
+/* Links inside cards: dark-blue accents */
+.card a { color: #0b5cff; }
+.card a:hover { color: #082a9a; }
+
+/* Accent bar gradient for titles */
+.card .card-title::before {
+  background: linear-gradient(90deg, #ff5a1f, #ffb86b);
+}
+
+/* Card CTA buttons warm */
+.card .btn-outline-primary {
+  border-color: rgba(255,120,50,0.18);
+  color: #ffb86b;
+}
+.card .btn-outline-primary:hover {
+  background: rgba(255,120,50,0.06);
+  color: #fff;
+  border-color: rgba(255,120,50,0.28);
+}
+
+/* Improve contrast for card CTA buttons (Read PDF, Go to GitHub) */
+.card .btn-outline-primary,
+.card .btn-outline-secondary {
+  color: var(--content-text) !important; /* dark text for readability on white cards */
+  border-color: rgba(2,6,12,0.12) !important; /* subtle visible border */
+  font-weight: 600 !important;
+}
+.card .btn-outline-primary:hover,
+.card .btn-outline-secondary:hover {
+  background: rgba(2,6,12,0.06) !important; /* light tint on hover to indicate press */
+  color: var(--content-text) !important;
+  border-color: rgba(2,6,12,0.16) !important;
+}
+.card .btn-sm.btn-outline-primary,
+.card .btn-sm.btn-outline-secondary {
+  padding: .35rem .6rem !important; /* slightly larger tap target */
+}
+
+/* Button overrides to match fiery theme (stronger specificity) */
+.btn-primary {
+  background: linear-gradient(90deg, var(--bs-primary), #ff4b00) !important;
+  border: none !important;
+  color: #fff !important;
+  box-shadow: 0 8px 28px rgba(255,90,30,0.18) !important;
+}
+.btn-primary:hover {
+  filter: brightness(0.95);
+}
+
+/* Increase max width for very large screens */
+@media (min-width: 1200px) {
+  .card { max-width: 1200px; }
+  .hero-title { font-size: 4.2rem; }
+}
+
+/* ensure readable contrast on small screens */
+@media (max-width: 575.98px) {
+  .hero-title { font-size: 1.8rem; }
+  .card { margin-left: .75rem; margin-right: .75rem; }
+}
+
+/* Final tweaks */
+a { color: var(--bs-primary); }
+.btn-outline-secondary { border-color: rgba(255,140,80,0.12); color: #ffcc9b; }
+.btn-outline-secondary:hover { background: rgba(255,140,80,0.06); color: #fff; }
+
+/* End of custom CSS */
