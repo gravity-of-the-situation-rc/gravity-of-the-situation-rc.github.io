@@ -320,6 +320,18 @@ h1.fw-light {
   filter: brightness(0.95);
 }
 
+/* Make card 'Read PDF' CTA outline orange to match theme */
+.card .btn-outline-primary {
+  /* strong orange border and text to improve visibility on white cards */
+  border-color: var(--bs-primary) !important;
+  color: var(--bs-primary) !important;
+}
+.card .btn-outline-primary:hover {
+  background: rgba(255,122,43,0.10) !important; /* subtle orange hover */
+  color: #fff !important;
+  border-color: var(--bs-primary) !important;
+}
+
 /* Increase max width for very large screens */
 @media (min-width: 1200px) {
   .card { max-width: 1200px; }
