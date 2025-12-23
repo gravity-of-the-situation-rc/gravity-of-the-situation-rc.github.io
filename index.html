@@ -176,6 +176,12 @@
             <div class="card-body">
               <h3 class="card-title">Results — Our Security Findings</h3>
                 <p class="card-text">
+                    Rocket.Chat E2EE consists of three protocols: (1) RSA-based key exchange and AES-CBC-based message encryption,
+                    (2) password-based encryption (the E2EE password) for key backup, and (3) the E2EE password update/reset feature.
+                    We analyze these protocols in an end-to-end manner.
+                </p>
+
+                <p class="card-text">
                     We conduct the first comprehensive security analysis of Rocket.Chat’s E2EE by combining
                     formal verification (ProVerif) with extensive manual analysis (specification + source code + operational testing).
                 </p>
@@ -296,6 +302,9 @@
 
 
                 <strong>Patch Status:</strong>
+                <p class="text-muted small mb-2">
+                    Note: This table is horizontally scrollable on smartphones.
+                </p>
                 <table border="1" cellpadding="10" cellspacing="0" style="border-collapse: collapse; width: 100%; text-align: left;">
                     <thead>
                     <tr style="background-color: #f2f2f2;">

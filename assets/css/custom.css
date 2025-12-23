@@ -344,6 +344,53 @@ h1.fw-light {
   .card { margin-left: .75rem; margin-right: .75rem; }
 }
 
+/* Responsive tables: allow horizontal scroll on small screens (mobile) */
+@media (max-width: 767.98px) {
+  /* If a .table-responsive wrapper exists, ensure it scrolls smoothly */
+  .table-responsive {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Ensure tables inside cards or album can be scrolled horizontally */
+  .card .card-body table,
+  .album .container table,
+  table.responsive-table {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    white-space: nowrap; /* keep cells on one line to enable horizontal scrolling */
+  }
+
+  /* Prevent table cells from wrapping and keep readable spacing */
+  .card .card-body table th,
+  .card .card-body table td,
+  .album .container table th,
+  .album .container table td,
+  table.responsive-table th,
+  table.responsive-table td {
+    white-space: nowrap;
+    padding: 0.5rem 0.6rem;
+  }
+
+  /* Optional: add a subtle shadow to indicate scrollability */
+  .card .card-body {
+    position: relative;
+  }
+  .card .card-body::after {
+    content: '';
+    pointer-events: none;
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+    width: 2.5rem;
+    background: linear-gradient(90deg, rgba(255,255,255,0), rgba(0,0,0,0.04));
+    display: block;
+  }
+}
+
 /* Final tweaks */
 a { color: var(--bs-primary); }
 .btn-outline-secondary { border-color: rgba(255,140,80,0.12); color: #ffcc9b; }
