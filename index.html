@@ -142,6 +142,7 @@
           <div class="card h-100">
             <div class="card-body">
               <h3 class="card-title">What is Rocket.Chat?</h3>
+                <hr class="my-3 text-secondary">
                 <p class="card-text">
                     Rocket.Chat is a widely deployed group chat platform used across enterprises, public-sector
                     organizations, educational institutions, and self-hosted environments. It serves over 15 million users in 150 countries and supports both SaaS and
@@ -164,6 +165,7 @@
               <div id="note" class="card h-100">
                   <div class="card-body">
                       <h3 class="card-title">Note:</h3>
+                <hr class="my-3 text-secondary">
                       For readability, this page and our paper use the present tense. However, critical vulnerabilities
                       reported in this work have already been addressed, and vendor patches are available (see
                       <a href="#disclosure" class="alert-link">Disclosure</a>).
@@ -176,6 +178,7 @@
           <div class="card h-100">
             <div class="card-body">
               <h3 class="card-title">Results — Our Security Findings</h3>
+                <hr class="my-3 text-secondary">
                 <p class="card-text">
                     Rocket.Chat E2EE consists of three protocols: (1) RSA-based key exchange and AES-CBC-based message encryption,
                     (2) password-based encryption (the E2EE password) for key backup, and (3) the E2EE password update/reset feature.
@@ -290,6 +293,7 @@
           <div class="card h-100">
             <div class="card-body">
               <h3 id="disclosure" class="card-title">Disclosure</h3>
+                <hr class="my-3 text-secondary">
                 <p class="card-text">
                     We follow responsible disclosure and coordinate with the Rocket.Chat security team.
                     We first contacted the vendor on <strong>May 30, 2024</strong> and received the first response on <strong>June 26, 2024</strong>.<br/>
@@ -393,7 +397,9 @@
               <div id="paper" class="card h-100">
                   <div class="card-body">
                       <h3 class="card-title">Paper &amp; Talk</h3>
+                <hr class="my-3 text-secondary">
 
+                      <h4 class="text-black">Conference Paper</h4>
                       <p class="card-text">
                           <span>Hayato KIMURA, Ryoma ITO, Kazuhiko MINEMATSU and Takanori ISOBE, </span><br/>
                           <strong>“Gravity of the Situation: Security Analysis on Rocket.Chat E2EE”</strong><br/>
@@ -426,6 +432,14 @@
   url          = {https://doi.org/10.1109/ACSAC67867.2025.00018},
   doi          = {10.1109/ACSAC67867.2025.00018},
 }</code></pre>
+
+                      <h4 class="text-black">Talk</h4>
+                      <p class="card-text">
+                          <span>Hayato KIMURA, Ryoma ITO, Kazuhiko MINEMATSU and Takanori ISOBE, </span><br/>
+                          <strong>“Payload Compromised: Full Key Recovery in Rocket.Chat E2EE”</strong><br/>
+                          <span>Accepted at <a href="https://blackhat.com/asia-26/briefings/schedule/?#payload-compromised-full-key-recovery-in-rocketchat-e2ee-50105" target="_blank" rel="noopener">Black Hat Asia 2026</a> (Jan 2026) and will be presented on Apr 2026.</span>
+                      </p>
+                      <br/>
                   </div>
               </div>
           </div>
@@ -436,6 +450,7 @@
           <div id="poc" class="card h-100">
             <div class="card-body">
               <h3 class="card-title">Proof of Concept</h3>
+                <hr class="my-3 text-secondary">
               <p class="card-text">Proof-of-concept code and reproducible instructions are available on GitHub.</p>
                 <p class="card-text">
                     We implement working Proof-of-Concept (PoC) exploits to validate exploitability and support vendor verification.
@@ -455,6 +470,7 @@
           <div id="faq" class="card h-100">
             <div class="card-body">
               <h3 class="card-title">FAQ</h3>
+                <hr class="my-3 text-secondary">
                 <p class="card-text mb-2">
                     <strong>Q1. Which versions are affected?</strong><br>
                     Our findings affect following Rocket.Chat E2EE version.
