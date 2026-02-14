@@ -40,6 +40,8 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
 <!-- Using Bootswatch 'Cosmo' theme via CDN -->
 <link href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/cosmo/bootstrap.min.css" rel="stylesheet">
+<link href="../assets/css/video.css" rel="stylesheet">
+
 
     <style>
       .bd-placeholder-img {
@@ -280,7 +282,7 @@
                     We also report several potential issues and supporting analyses, including the <strong>KeyID issue (ID collisions and potential key
                     leakage)</strong>, <strong>replay attacks</strong>, <strong>denial-of-service attacks</strong>, and <strong>downgrade attacks</strong>. In addition, we identify gaps between the
                     Rocket.Chat E2EE documentation and the deployed implementation (see the Appendix), and we analyze affected instances using
-                    Shodan. Issues impacting confidentiality have already been addressed (see the Appendix and
+                    Shodan. Issues impacting confidentiality and message integrity have already been addressed (see the Appendix and
                     <a href="#disclosure">Disclosure</a>).
                 </p>
             </div>
@@ -461,6 +463,22 @@
                     <li>HTTP Proxy-based active attacker experiments (e.g., BurpSuite / mitmproxy / ZAP / PacketProxy)</li>
                 </ul>
               <a href="https://github.com/gravity-of-the-situation-rc/Artifacts-of-Security-Analysis-on-RocketChat-E2EE" target="_blank" rel="noopener" class="btn btn-sm btn-outline-secondary mt-2">Go to GitHub</a>
+              <br/><br/>
+              <h4 class="text-black">Selected recorded PoC</h4>
+              <b>Key Injection Attack (Section5)</b>
+              <div class="video-embed">
+                <video controls playsinline preload="none" poster="../assets/img/thumb-key-injection.jpg">
+                  <source src="https://raw.githubusercontent.com/gravity-of-the-situation-rc/Artifacts-of-Security-Analysis-on-RocketChat-E2EE/main/claims/Claim-case3-Section5-and-7/expected/Section5-key-injection-attack.mp4" type="video/mp4">
+                  Your browser does not support the video tag.
+                </video>
+              </div>
+              <b>Message Forgery (Section7)</b>
+              <div class="video-embed">
+                <video controls playsinline preload="none" poster="../assets/img/thumb-cbc-forgery.jpg">
+                  <source src="https://raw.githubusercontent.com/gravity-of-the-situation-rc/Artifacts-of-Security-Analysis-on-RocketChat-E2EE/main/claims/Claim-case3-Section5-and-7/expected/Section7-cbc-forgery-with-message-id.mp4" type="video/mp4">
+                  Your browser does not support the video tag.
+                </video>
+              </div>
             </div>
           </div>
         </div>
@@ -562,7 +580,7 @@
     <div style="text-align:center; font-size:0.9em; color:#666;">
       This website is managed by <a href="https://www.crypt-sec.ist.osaka-u.ac.jp/en" target=”_blank" rel="noopener">Cryptography Engineering Laboratory, The University of Osaka</a><br>
         <p>This page was first published on 22 Dec 2025	<br>
-      Last updated: 24 Dec 2025 (UTC+0)	</p>
+      Last updated: 14 Feb 2026 (UTC+0)	</p>
     </div>
   </div>
 </footer>
